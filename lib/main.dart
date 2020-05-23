@@ -176,7 +176,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             WhitelistingTextInputFormatter.digitsOnly
                           ],
                           decoration: InputDecoration(
-                            hintText: 'Height(in cm)',
+                            hintText: 'Address',
                           ),
                         ),
                       ),
@@ -191,7 +191,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             WhitelistingTextInputFormatter.digitsOnly
                           ],
                           decoration: InputDecoration(
-                            hintText: 'Weight(in kg)',
+                            hintText: 'Pincode',
                           ),
                         ),
                       ),
