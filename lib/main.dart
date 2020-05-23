@@ -71,6 +71,7 @@ class _MyHomePageState extends State<MyHomePage> {
       key: _scaffoldKey,
       appBar: AppBar(
         title: Text(widget.title),
+        backgroundColor: Colors.red,
       ),
       body: SingleChildScrollView(
         child: Stack(
@@ -96,7 +97,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           controller: name,
                           autofocus: false,
                           decoration: InputDecoration(
-                            prefixIcon: Icon(Icons.perm_identity),
+                            prefixIcon: Icon(Icons.person_pin),
                             hintText: 'Name',
                           ),
                         ),
@@ -109,7 +110,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           controller: mobile,
                           autofocus: false,
                           decoration: InputDecoration(
-                            prefixIcon: Icon(Icons.mobile_screen_share),
+                            prefixIcon: Icon(Icons.phone_android),
                             hintText: 'Mobile',
                           ),
                         ),
@@ -154,10 +155,9 @@ class _MyHomePageState extends State<MyHomePage> {
                           ],
                           decoration: InputDecoration(
                             hintText: 'Age',
+                            prefixIcon: Icon(Icons.image_aspect_ratio),
                           ),
-                          onTap: () {
-                            new TextEditingController().clear();
-                          },
+
                         ),
                       ),
                     ),
@@ -177,6 +177,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           ],
                           decoration: InputDecoration(
                             hintText: 'Address',
+                            prefixIcon: Icon(Icons.view_headline),
                           ),
                         ),
                       ),
@@ -192,6 +193,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           ],
                           decoration: InputDecoration(
                             hintText: 'Pincode',
+                            prefixIcon: Icon(Icons.border_color),
                           ),
                         ),
                       ),
@@ -204,7 +206,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     child: Container(
                       height: 50,
                       width: double.infinity,
-                      color: Colors.orange,
+                      color: Colors.deepOrange,
                       child: Center(
                           child: Text(
                         "Register",
