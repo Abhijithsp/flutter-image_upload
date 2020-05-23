@@ -1,5 +1,6 @@
-# imageuplaod
-A sample app image upload with Flutter
+# Image Uplaod
+## A sample app image upload with Flutter
+
 ![Screenshots](/screenshots/screenshot-1.jpg?raw=true "Register Screen")
 ![Screenshots](/screenshots/screenshot-2.jpg?raw=true "Capture or choose image")
 
