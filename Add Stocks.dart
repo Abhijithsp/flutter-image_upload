@@ -661,3 +661,60 @@ class StockBranchDetailsModel{
 
   StockBranchDetailsModel(this.branch, this.kg, this.mg,this.litre,this.mlil,this.count);
 }
+
+
+
+class BranchModel{
+  String id;
+  String stationId;
+  String branchId;
+  String name;
+  String username;
+  String email;
+  String phone;
+  String location;
+  String address;
+  String emailVerifiedAt;
+  String roleId;
+  String planId;
+  String planValidity;
+  String planAccessory;
+  String planAndroid;
+  String planIos;
+  String planAddBranches;
+  String planStockManagement;
+  String planAmount;
+  String plannedDate;
+  String expireDate;
+  String planExpire;
+  String logo;
+
+
+  BranchModel(
+        this.id,
+        this.stationId,
+        this.branchId,
+        this.name,
+        this.username,
+        this.email,
+        this.phone,
+        this.location,
+        this.address,
+        this.emailVerifiedAt,
+        this.roleId,
+        this.planId,
+        this.planValidity,
+        this.planAccessory,
+        this.planAndroid,
+        this.planIos,
+        this.planAddBranches,
+        this.planStockManagement,
+        this.planAmount,
+        this.plannedDate,
+        this.expireDate,
+        this.planExpire,
+        this.logo,
+   );
+}
+
+
