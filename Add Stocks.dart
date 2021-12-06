@@ -653,3 +653,11 @@ class _AddStockState extends State<AddStock> {
 
 
 }
+
+
+
+class StockBranchDetailsModel{
+  var branch,kg,mg,litre,mlil,count;
+
+  StockBranchDetailsModel(this.branch, this.kg, this.mg,this.litre,this.mlil,this.count);
+}
