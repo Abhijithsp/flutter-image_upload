@@ -8,7 +8,7 @@ import 'package:mime/mime.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 import 'package:http_parser/http_parser.dart';
-import 'package:progress_dialog/progress_dialog.dart';
+import 'package:progress_dialog_null_safe/progress_dialog_null_safe.dart';
 
 
 import 'Utils/Utils.dart';
@@ -33,7 +33,7 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
+  const MyHomePage({super.key, required this.title});
 
   final String title;
 
@@ -44,10 +44,10 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   bool isimage_selected = false;
   bool image_show_containervisible = false;
-  File _imageFile;
+  File? _imageFile;
 
   //initialize Progressbar
-  ProgressDialog pr;
+  late ProgressDialog pr;
 
   final mobile = TextEditingController();
   final name = TextEditingController();
@@ -58,9 +58,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    //SnackBar initialize
-    final _scaffoldKey = GlobalKey<ScaffoldState>();
-
     //initialize Progressbar design & style
     pr = new ProgressDialog(context, showLogs: true);
 
@@ -68,7 +65,6 @@ class _MyHomePageState extends State<MyHomePage> {
     pr.style(message: 'Please wait...');
 
     return Scaffold(
-      key: _scaffoldKey,
       appBar: AppBar(
         title: Text(widget.title),
         backgroundColor: Colors.red,
@@ -151,7 +147,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           controller: age,
                           keyboardType: TextInputType.number,
                           inputFormatters: [
-                            WhitelistingTextInputFormatter.digitsOnly
+                            FilteringTextInputFormatter.digitsOnly
                           ],
                           decoration: InputDecoration(
                             hintText: 'Age',
@@ -173,7 +169,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           controller: height,
                           keyboardType: TextInputType.number,
                           inputFormatters: [
-                            WhitelistingTextInputFormatter.digitsOnly
+                            FilteringTextInputFormatter.digitsOnly
                           ],
                           decoration: InputDecoration(
                             hintText: 'Address',
@@ -189,7 +185,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           controller: weight,
                           keyboardType: TextInputType.number,
                           inputFormatters: [
-                            WhitelistingTextInputFormatter.digitsOnly
+                            FilteringTextInputFormatter.digitsOnly
                           ],
                           decoration: InputDecoration(
                             hintText: 'Pincode',
@@ -219,35 +215,35 @@ class _MyHomePageState extends State<MyHomePage> {
                     if (isimage_selected == false) {
                       final snackBar =
                           SnackBar(content: Text("Select or Capture Image"));
-                      _scaffoldKey.currentState.showSnackBar(snackBar);
+                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
                     }
-                    else if(name.text.toString().length == 0)
+                    else if(name.text.length == 0)
                       {
                         final snackBar =
                         SnackBar(content: Text("Enter your name"));
-                        _scaffoldKey.currentState.showSnackBar(snackBar);
+                        ScaffoldMessenger.of(context).showSnackBar(snackBar);
                       }
-                    else if(mobile.text.toString().length == 0)
+                    else if(mobile.text.length == 0)
                     {
                       final snackBar =
                       SnackBar(content: Text("Enter your mobile number"));
-                      _scaffoldKey.currentState.showSnackBar(snackBar);
+                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
                     }
-                    else if(place.text.toString().length == 0)
+                    else if(place.text.length == 0)
                     {
                       final snackBar =
                       SnackBar(content: Text("Enter your place"));
-                      _scaffoldKey.currentState.showSnackBar(snackBar);
+                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
                     }
                     else {
                       register(
-                          _imageFile,
-                          name.toString(),
-                          mobile.toString(),
-                          place.toString(),
-                          age.toString(),
-                          height.toString(),
-                          weight.toString());
+                          _imageFile!,
+                          name.text,
+                          mobile.text,
+                          place.text,
+                          age.text,
+                          height.text,
+                          weight.text);
                     }
                   },
                 ),
@@ -267,7 +263,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         backgroundImage: AssetImage("assets/images/user.jpg"),
                         radius: 55.0)
                     : CircleAvatar(
-                        backgroundImage: FileImage(_imageFile), radius: 55.0),
+                        backgroundImage: FileImage(_imageFile!), radius: 55.0),
               ),
             ),
           ],
@@ -278,9 +274,15 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void register(File image, String name, String mobile, String place, String age, String height, String weight,) async {
     //show progressbar
-    pr.show();
+    await pr.show();
 
-    final mimeTypeData = lookupMimeType(image.path, headerBytes: [0xFF, 0xD8]).split('/');
+    final mimeTypeData = lookupMimeType(image.path, headerBytes: [0xFF, 0xD8])?.split('/');
+    if (mimeTypeData == null) {
+      // Handle the case where the MIME type could not be determined
+      await pr.hide();
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Could not determine file type')));
+      return;
+    }
     final request = new http.MultipartRequest("POST", Uri.parse(Urls.ImageInsert));
     final file = await http.MultipartFile.fromPath('Photo', image.path, contentType: MediaType(mimeTypeData[0], mimeTypeData[1]));
 
@@ -295,12 +297,12 @@ class _MyHomePageState extends State<MyHomePage> {
     StreamedResponse response = await request.send();
 
     //waiting for response
-    response.stream.transform(utf8.decoder).listen((value) {
+    response.stream.transform(utf8.decoder).listen((value) async {
       //Response can be pass with map object to alertbox
       Map<String, dynamic> map = jsonDecode(value);
       try {
         // hide progrssbar
-        pr.hide();
+        await pr.hide();
         showDialog(
           context: context,
           builder: (BuildContext context) {
@@ -309,7 +311,7 @@ class _MyHomePageState extends State<MyHomePage> {
               //here we show response message from api
               content: Text(map['message']),
               actions: [
-                FlatButton(
+                TextButton(
                   child: Text("Close"),
                   onPressed: () {
                     //Do Something here
@@ -328,24 +330,21 @@ class _MyHomePageState extends State<MyHomePage> {
   //Image Picker For Pick image from gallery or Camera
 
   void Pickimage(BuildContext context, ImageSource source) async {
-    if (source != null) {
-      final image = await ImagePicker.pickImage(
+      final image = await ImagePicker().pickImage(
           source: source, imageQuality: 50, maxHeight: 500, maxWidth: 500);
       if (image != null) {
         setState(() {
-          _imageFile = image;
+          _imageFile = File(image.path);
           isimage_selected = true;
           image_show_containervisible = true;
         });
       }
-    }
     Navigator.pop(context);
   }
 
   //Image Picker Model,For Select Images or Capture Image
 
   void openImagePickerModal(BuildContext context) {
-    final flatButtonColor = Theme.of(context).primaryColor;
     showModalBottomSheet(
         context: context,
         builder: (BuildContext context) {
@@ -362,8 +361,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 SizedBox(
                   height: 15.0,
                 ),
-                FlatButton(
-                  textColor: flatButtonColor,
+                TextButton(
                   child: Text(
                     'Use Camera',
                     style: TextStyle(fontSize: 15),
@@ -372,8 +370,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     Pickimage(context, ImageSource.camera);
                   },
                 ),
-                FlatButton(
-                  textColor: flatButtonColor,
+                TextButton(
                   child: Text(
                     'Use Gallery',
                     style: TextStyle(fontSize: 15),
